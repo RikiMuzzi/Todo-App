@@ -1,0 +1,179 @@
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+}
+
+.tomatoContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.tomato {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    background-color: rgb(229, 79, 79);
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.5);
+    border-radius: 20px;
+    padding: 20px;
+    width: auto;
+}
+
+#interface {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+#topText {
+    font-size: x-large;
+    font-weight: 700;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 0 10px 5px 10px;
+    width: auto;
+}
+
+.allInput {
+    display: flex;
+    font-weight: 500;
+}
+
+.allInput input {
+    text-align: center;
+    font-size: medium;
+    font-weight: 600;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+}
+
+.times {
+    display: flex;
+    flex-direction: column; 
+    margin-right: 10px;
+    align-items: center;
+}
+
+.times input {
+    background-color: white;
+    width: 100%;
+    height: 45px;
+    margin-bottom: 5px;
+}
+
+.repetition {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#repTime {
+    width: 120px;
+    height: 120px;
+    font-size: xx-large;
+}
+
+.tomatoButtons {
+    margin-top: 5px;
+    display: flex;
+    gap: 10px;
+    align-items: center; /* Allineamento verticale al centro */
+    justify-content: center; /* Allineamento orizzontale al centro */
+}
+
+.tomatoButtons button {
+    border-radius: 10px;
+    width: 100px;
+    height: 40px;
+    border: none;
+    font-size: large;
+    font-weight: 600;
+    background-color: rgb(255, 255, 255);
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.5);
+}
+
+#circle {
+    margin: 0 auto;
+    position: relative;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: 5px solid rgb(253, 138, 138);
+    overflow: hidden;
+}
+
+#circle2 {
+    position: absolute;
+    width: 300px;
+    height: 0px;
+    background-color: rgb(253, 138, 138);
+    bottom: 0;
+    overflow: hidden;
+    transition: height 1s ease;
+}
+
+#circle2.fill #timerDisplay {
+    text-shadow: 0 0 5px rgba(226, 55, 55, 0.896);
+}
+
+#timerDisplay {
+    position: absolute;
+    text-align: center;
+    padding-top: 30%;
+    padding-bottom: 30%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: xx-large;
+    z-index: 1;
+}
+
+.timer:before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(226, 55, 55);
+    transform-origin: bottom;
+    transform: scaleY(0);
+    transition: transform 1s linear;
+}
+
+#current {
+    color: white;
+    text-align: center;
+    align-items: center; 
+    justify-content: center;
+    display: flex;
+    width: 100%;
+    height: 40px;
+    font-size: x-large;
+    background-color: rgb(253, 138, 138);
+    border-radius: 10px;
+    font-weight: 700;
+}
+
+.tomatoButtons button:hover,
+.tomatoButtons button:focus {
+    outline: none;
+    background-color: #a2a0a0e0; 
+    color: white; 
+    cursor: pointer;
+}
+  
+.tomatoButtons button:active {
+    background-color: rgb(253, 138, 138); 
+    color: white;
+}

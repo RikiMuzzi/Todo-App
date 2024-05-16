@@ -1,0 +1,43 @@
+<%- include('partials/header'); -%>
+
+<body>
+    <div class="tomatoContainer">
+        <div class="tomato">
+            <div id="interface">
+                <label id="topText" for="timerInput"> Entry study time in minute: </label>
+                <form>
+                    <div class="allInput">    
+                        <div class="times">
+                            <div class="marginText" id="sT"> STUDY TIME</div>
+                            <input type="number" id="studyTime" name="studyTime" min="1" required="" value="<%= typeof studyTime !== 'undefined' ? studyTime : '' %>">
+                            <div class="marginText" id="pT"> PAUSE TIME</div>
+                            <input type="number" id="pauseTime" name="pauseTime" min="1" required="" value="<%= typeof pauseTime !== 'undefined' ? pauseTime : '' %>">
+                        </div>
+                        <div class="repetition">
+                            <div class="marginText" id="rep"> REPETITION</div>
+                            <input type="number" id="repTime" name="repeat" min="1" required="" value="<%= typeof repTime !== 'undefined' ? repTime : '' %>">
+                        </div>  
+                    </div>
+                    <div class="tomatoButtons">
+                        <button id="startButton" type="submit">START</button>
+                        <button id="pauseButton" type="button" onclick="clearTomato()">STOP</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="circleWrap">
+                <div id="circle">
+                    <div class="timer" id="timerDisplay"> 00:00 </div>
+                    <div id="circle2"></div>
+                </div>
+            </div>
+
+            <div id="current"></div>
+        </div>
+    </div>
+
+    <div id="timerId" data-timerid="<%= timer ? timer._id : '' %>"></div>
+    <script src="/tomato.js"></script>
+</body>
+
+<%- include('partials/footer'); -%>

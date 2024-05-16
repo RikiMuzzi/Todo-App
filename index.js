@@ -39,6 +39,8 @@ app.use((req, res, next) => {
   next(); // Continue with the next middleware
 });
 
+app.use(express.static(path.join(__dirname, "public")));
+
 // Database connection
 const mongoDBUri = "mongodb+srv://riccardomuzzi02:Nutella123@muzzicluster.qh3kblb.mongodb.net/?retryWrites=true&w=majority&appName=MuzziCluster";
 mongoose.connect(mongoDBUri, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -60,18 +62,29 @@ const homeContent = "Contenuto della home";
 
 // Mongoose schema for tasks
 const todoSchema = new mongoose.Schema({
-    header: String,
-    completed: { type: Boolean, default: false },
-    author: String,
+  header: String,
+  completed: { type: Boolean, default: false },
+  author: String,
 });
 
+const timerSchema = new mongoose.Schema({
+  stTime: Number,
+  psTime: Number,
+  rep: Number,
+  timeStudied: { type: Number, default: 0},
+  percent: { type: Number, default: 0},
+  live: { type: Boolean, default: true },
+  author: String,
+})
+
 const userSchema = new mongoose.Schema({
-    username: { type: String, unique: true, required: true },
-    password: { type: String, required: true },
-  });
+  username: { type: String, unique: true, required: true },
+  password: { type: String, required: true },
+});
   
-  const Todo = mongoose.model("Todo", todoSchema);
-  const User = mongoose.model("User", userSchema);
+const Todo = mongoose.model("Todo", todoSchema);
+const Timer = mongoose.model("Timer", timerSchema);
+const User = mongoose.model("User", userSchema);
   
   // Passport setup for user authentication
   passport.use(
@@ -171,26 +184,26 @@ const userSchema = new mongoose.Schema({
     });
   });
   
-  // Main routes
+// Main routes
 
 app.get("/", ensureAuthenticated, async (req, res) => {
-    try {
-        const userId = req.user._id;
-        const user = await User.findById(userId);
+  try {
+    const userId = req.user._id;
+    const user = await User.findById(userId);
   
-        if (!user) {
-            console.error("User not found");
-            return res.status(404).send("User not found"); // If user is not found
-        }
-
-        const tasks = await Todo.find({ author: user.username });
-        res.render("home", { 
-            username: user.username, content: homeContent, tasks: tasks 
-        }); // Passa la variabile tasks al template 'home.ejs'
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Error fetching tasks');
+    if (!user) {
+      console.error("User not found");
+      return res.status(404).send("User not found"); // If user is not found
     }
+
+    const tasks = await Todo.find({ author: user.username });
+    res.render("home", { 
+      username: user.username, content: homeContent, tasks: tasks 
+    }); // Passa la variabile tasks al template 'home.ejs'
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error fetching tasks');
+  }
 });
 
 app.post("/compose", ensureAuthenticated, async (req, res) => {
@@ -249,7 +262,6 @@ app.post("/tasks/:taskId/delete", async (req, res) => {
     }
 });
 
-// Aggiungi una nuova route per gestire la richiesta POST dal pulsante "Clear All"
 app.post("/clear", async (req, res) => {
     try {
         // Elimina tutti i todos dalla collezione
@@ -257,9 +269,108 @@ app.post("/clear", async (req, res) => {
         res.redirect("/");
     } catch (error) {
         console.error(error);
-        res.status(500).send("Errore durante l'eliminazione di tutti i todos");
+        res.status(500).send("Errore durante l'eliminazione di tutte le task");
     }
 });
+
+// gestione Timer
+
+app.get("/tomato", ensureAuthenticated, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      console.error("User not found");
+      return res.status(404).send("User not found"); // If user is not found
+    }
+
+    // Ottieni l'ID del timer e passalo alla vista tomato.ejs
+    const timer = await Timer.findOne({ author: user.username }); // Modifica questa query in base alla tua logica di business
+    const timerId = timer ? timer._id : null; // Controlla se il timer esiste e ottieni il suo ID
+
+    res.render("tomato", { 
+      username: user.username,
+      timer: timer // Passa l'oggetto timer alla vista
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error fetching tasks');
+  }
+});
+
+
+app.get("/timers/:timerId", ensureAuthenticated, async (req, res) => {
+  const timerId = req.params.timerId; // Ottieni l'ID del timer dalla richiesta
+  try {
+    const timer = await Timer.findById(timerId); // Cerca il timer nel database per ID
+
+    if (!timer) {
+      return res.status(404).send("Timer non trovato"); 
+    }
+
+    // Se il timer esiste, restituisci l'ID al client
+    res.json({ success: true, timerId: timer._id });
+  } catch (error) {
+    console.error("Errore durante il recupero del timer:", error);
+    res.status(500).send("Errore durante il recupero del timer"); 
+  }
+});
+
+app.post("/timers/:timerId/update", async (req, res) => {
+  try {
+      const timerId = req.params.timerId; 
+      const timer = await Timer.findById(timerId);
+      if (!timer) {
+        console.log("Tomato not founded");
+        return res.status(404).send("Tomato not founded");
+      }
+
+      timer.live = req.body.liveNow; 
+      timer.timeStudied = req.body.completed;
+      timer.percent = req.body.percentual;
+
+      await timer.save();
+      console.log(timer);
+      
+      res.status(200).send("Timer updated successfully"); 
+  } catch (error) {
+      console.error(error);
+      console.log("unlucky");
+      res.status(500).send("Error");
+  }
+});
+
+app.post("/saveTomato", ensureAuthenticated, async (req, res) => {
+  const userId = req.user._id;
+  const user = await User.findById(userId);
+
+  if (!user) {
+    return res.status(404).send("User not found");
+  }
+
+  const newTimer = new Timer({
+      stTime: req.body.studyTime,
+      psTime: req.body.pauseTime,
+      rep: req.body.repeat,
+      author: user.username,
+  });
+
+  try {
+    // Salva il nuovo timer nel database
+    await newTimer.save();
+    console.log(newTimer);
+
+    // Restituisci l'ID del timer corrente come parte della risposta
+    res.status(200).json({ timerId: newTimer._id });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Errore durante il salvataggio del timer');
+  }
+});
+
+
 
 // Listen on default port 3000
 app.listen(3000);

@@ -1,12 +1,20 @@
 <%- include('partials/header'); -%>
 
-<h1>Login</h1>
+<h1 id="loginTitle">Login</h1>
     <form action="/login" method="POST">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br>
-        <button type="submit">Login</button>
+        <div class="login">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required><br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required><br>
+        
+            <button class="loginButton" type="submit">Sign In</button>
+        </div>
     </form>
 
-    <%- include('partials/footer'); -%>
+        <div class="elseRegister">
+            <div>Non sei ancora registrato?</div>
+            <a class="goToRegButton" class="nav-link" href="/register">Sign Up</a>
+        </div>
+
+<%- include('partials/footer'); -%>
